@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Audio Transcript Viewer</title>
+    <style>
+        /* Modern Google font for creativity */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f5;
+            color: #333;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 50px 0;
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: 700;
+            color: #3f51b5;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+        }
+
+        .transcript-box {
+            background: linear-gradient(135deg, #fff, #e3f2fd);
+            border: none;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .transcript-box h2 {
+            color: #3f51b5;
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .transcript {
+            font-size: 18px;
+            line-height: 1.75;
+            word-wrap: break-word;
+            letter-spacing: 0.5px;
+        }
+
+        /* Creative highlight effect with animation */
+        .highlight {
+            background-color: #ffeb3b;  /* Highlight color */
+            border-radius: 8px;
+            transition: background-color 0.4s ease, box-shadow 0.4s ease;
+            box-shadow: 0 0 15px rgba(255, 235, 59, 0.5); /* Glowing effect */
+        }
+
+        span {
+            display: inline;
+        }
+
+        /* Stylish custom audio player */
+        audio {
+            width: 100%;
+            margin-top: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+
+        /* Styling the play button */
+        audio::-webkit-media-controls-play-button {
+            background-color: #3f51b5;
+            border-radius: 50%;
+        }
+
+        /* Style for progress bar */
+        audio::-webkit-media-controls-timeline {
+            height: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Creative Audio Transcript Viewer</h1>
+
+        <audio id="audioPlayer" controls>
+            <source src="/audio" type="audio/wav">
+            Your browser does not support the audio element.
+        </audio>
+
+        <div class="transcript-box">
+            <h2>Transcript:</h2>
+            <div class="transcript" id="transcript">
+                {% for segment in segments %}
+                    {% for word in segment.words %}
+                        <span data-start="{{ word['start'] }}" data-end="{{ word['end'] }}" id="word-{{ loop.index0 }}">
+                            {{ word['word'] }}
+                        </span>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const audioPlayer = document.getElementById('audioPlayer');
+        const transcript = document.getElementById('transcript');
+        let words = transcript.getElementsByTagName('span');
+
+        // Function to remove all highlights
+        function removeHighlights() {
+            for (let word of words) {
+                word.classList.remove('highlight');
+            }
+        }
+
+        // Event listener for time update on audio player
+        audioPlayer.addEventListener('timeupdate', function() {
+            const currentTime = audioPlayer.currentTime;
+            removeHighlights();
+
+            // Iterate through words and highlight the one being spoken
+            for (let word of words) {
+                const start = parseFloat(word.getAttribute('data-start'));
+                const end = parseFloat(word.getAttribute('data-end'));
+
+                // Add a slight tolerance for better synchronization (0.05s before and after)
+                if (currentTime >= start - 0.05 && currentTime <= end + 0.05) {
+                    word.classList.add('highlight');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
