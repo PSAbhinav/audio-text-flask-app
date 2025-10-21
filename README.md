@@ -27,11 +27,13 @@ This project is a simple Flask web application that uses OpenAI's Whisper model 
 ### 1. Clone the repository
 
 git clone https://github.com/PSAbhinav/audio-text-flask-app.git
+
 cd audio-text-flask-app
 
 ### 2. Create a Python virtual environment (recommended)
 
 python -m venv venv
+
 venv\Scripts\activate # On Windows
 
 ### 3. Install dependencies
@@ -69,10 +71,15 @@ Visit [http://127.0.0.1:5000/](http://127.0.0.1:5000/) in your browser.
 audio-text-flask-app/
 │
 ├── app.py
+
 ├── Recording.wav
+
 ├── requirements.txt
+
 ├── index.html # Your template
+
 ├── .gitignore
+
 └── README.md
 
 ---
@@ -80,31 +87,45 @@ audio-text-flask-app/
 ## Example Code Snippet
 
 import os
+
 os.environ["PATH"] += os.pathsep + r"C:\ffmpeg\bin" # Update with your ffmpeg bin path
 
 from flask import Flask, render_template, send_file
+
 import whisper
 
 app = Flask(name)
 
 def transcribe_audio(file_path):
-model = whisper.load_model("base")
-result = model.transcribe(file_path, word_timestamps=True)
+
+  model = whisper.load_model("base")
+
+  result = model.transcribe(file_path, word_timestamps=True)
+
 return result["segments"]
 
+
 @app.route('/')
+
 def index():
-audio_file_path = r"C:\Users\abhin\Desktop\My_Projects\Audio-Text Conversion\Recording.wav"
-transcript_segments = transcribe_audio(audio_file_path)
+
+  audio_file_path = r"C:\Users\abhin\Desktop\My_Projects\Audio-Text Conversion\Recording.wav"
+  
+  transcript_segments = transcribe_audio(audio_file_path)
+  
 return render_template('index.html', segments=transcript_segments)
 
 @app.route('/audio')
+
 def get_audio():
-audio_file_path = r"C:\Users\abhin\Desktop\My_Projects\Audio-Text Conversion\Recording.wav"
+
+  audio_file_path = r"C:\Users\abhin\Desktop\My_Projects\Audio-Text Conversion\Recording.wav"
+
 return send_file(audio_file_path, mimetype='audio/wav')
 
 if name == "main":
-app.run(debug=True)
+
+  app.run(debug=True)
 
 ---
 
